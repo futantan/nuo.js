@@ -2,9 +2,8 @@
   "name": "FTPromise",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
-    "test": "babel index.js --out-dir lib --presets=@babel/env && promises-aplus-tests test/adapter"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +13,7 @@
     "@babel/core": "^7.1.2",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
+    "jest": "^26.1.0",
     "prettier": "1.14.3",
     "promises-aplus-tests": "*"
   },
