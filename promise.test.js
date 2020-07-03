@@ -12,10 +12,6 @@ describe('Promise constructor', () => {
     expect(typeof resolver.mock.calls[0][1]).toBe('function')
   })
 
-
-
-
-
   it('is in a PENDING state', () => {
     const promise = new FTPromise(function resolver(fulfill, reject) {
       /* ... */
@@ -23,10 +19,6 @@ describe('Promise constructor', () => {
     // for the sake of simplicity the state is public
     expect(promise.state).toBe('PENDING')
   })
-
-
-
-
 
   it('transitions to the FULFILLED state with a `value`', () => {
     const value = ':)'
@@ -36,10 +28,6 @@ describe('Promise constructor', () => {
     expect(promise.state).toBe('FULFILLED')
   })
 
-
-
-
-
   it('transitions to the REJECTED state with a `reason`', () => {
     const reason = 'I failed :('
     const promise = new FTPromise((fulfill, reject) => {
@@ -47,32 +35,15 @@ describe('Promise constructor', () => {
     })
     expect(promise.state).toBe('REJECTED')
   })
-
-
-
-
-
 })
 
-
 describe('Observing state changes', () => {
-
-
-
-
-
   it('should have a .then method', () => {
     const promise = new FTPromise(() => {})
     expect(typeof promise.then).toBe('function')
   })
 
-
-
-
-
-
-
-  it('should call the onFulfilled method when promise is in a FULFILLED state', (done) => {
+  it('should call the onFulfilled method when promise is in a FULFILLED state', done => {
     const value = ':)'
     const onFulfilled = jest.fn()
     const promise = new FTPromise((fulfill, reject) => {
@@ -85,9 +56,7 @@ describe('Observing state changes', () => {
     }, 10)
   })
 
-
-
-  it('transitions to the REJECTED state with a `reason`', (done) => {
+  it('transitions to the REJECTED state with a `reason`', done => {
     const reason = 'I failed :('
     const onRejected = jest.fn()
     const promise = new FTPromise((fulfill, reject) => {
@@ -106,7 +75,7 @@ describe('One way transition', () => {
   const value = ':)'
   const reason = 'I failed :('
 
-  it('when a promise is fulfilled it should not be rejected with another value', (done) => {
+  it('when a promise is fulfilled it should not be rejected with another value', done => {
     const onFulfilled = jest.fn()
     const onRejected = jest.fn()
 
@@ -125,7 +94,7 @@ describe('One way transition', () => {
     }, 10)
   })
 
-  it('when a promise is rejected it should not be fulfilled with another value', (done) => {
+  it('when a promise is rejected it should not be fulfilled with another value', done => {
     const onFulfilled = jest.fn()
     const onRejected = jest.fn()
 
@@ -146,7 +115,7 @@ describe('One way transition', () => {
 })
 
 describe('Handling resolver errors', () => {
-  it('when the resolver fails the promise should transition to the REJECTED state', (done) => {
+  it('when the resolver fails the promise should transition to the REJECTED state', done => {
     const reason = new Error('I failed :(')
     const onRejected = jest.fn()
     const promise = new FTPromise((fulfill, reject) => {
@@ -163,7 +132,7 @@ describe('Handling resolver errors', () => {
 })
 
 describe('Async executors', () => {
-  it('should queue callbacks when the promise is not fulfilled immediately', (done) => {
+  it('should queue callbacks when the promise is not fulfilled immediately', done => {
     const value = ':)'
     const promise = new FTPromise((fulfill, reject) => {
       setTimeout(fulfill, 1, value)
@@ -190,7 +159,7 @@ describe('Async executors', () => {
     }, 10)
   })
 
-  it('should queue callbacks when the promise is not rejected immediately', (done) => {
+  it('should queue callbacks when the promise is not rejected immediately', done => {
     const reason = 'I failed :('
     const promise = new FTPromise((fulfill, reject) => {
       setTimeout(reject, 1, reason)
@@ -222,14 +191,14 @@ describe('Chaining promises', () => {
   it('.then should return a new promise', () => {
     const f1 = jest.fn()
     expect(function() {
-      new FTPromise((fulfill) => fulfill()).then(f1).then(f1)
+      new FTPromise(fulfill => fulfill()).then(f1).then(f1)
     }).not.toThrow()
   })
 
-  it("if .then's onFulfilled is called without errors it should transition to FULFILLED", (done) => {
+  it("if .then's onFulfilled is called without errors it should transition to FULFILLED", done => {
     const value = ':)'
     const f1 = jest.fn()
-    new FTPromise((fulfill) => fulfill()).then(() => value).then(f1)
+    new FTPromise(fulfill => fulfill()).then(() => value).then(f1)
 
     setTimeout(() => {
       expect(f1.mock.calls.length).toBe(1)
@@ -238,10 +207,12 @@ describe('Chaining promises', () => {
     }, 10)
   })
 
-  it("if .then's onRejected is called without errors it should transition to FULFILLED", (done) => {
+  it("if .then's onRejected is called without errors it should transition to FULFILLED", done => {
     const value = ':)'
     const f1 = jest.fn()
-    new FTPromise((fulfill, reject) => reject()).then(null, () => value).then(f1)
+    new FTPromise((fulfill, reject) => reject())
+      .then(null, () => value)
+      .then(f1)
 
     setTimeout(() => {
       expect(f1.mock.calls.length).toBe(1)
@@ -250,10 +221,10 @@ describe('Chaining promises', () => {
     }, 10)
   })
 
-  it("if .then's onFulfilled is called and has an error it should transition to REJECTED", (done) => {
+  it("if .then's onFulfilled is called and has an error it should transition to REJECTED", done => {
     const reason = new Error('I failed :(')
     const f1 = jest.fn()
-    new FTPromise((fulfill) => fulfill())
+    new FTPromise(fulfill => fulfill())
       .then(() => {
         throw reason
       })
@@ -266,7 +237,7 @@ describe('Chaining promises', () => {
     }, 10)
   })
 
-  it("if .then's onRejected is called and has an error it should transition to REJECTED", (done) => {
+  it("if .then's onRejected is called and has an error it should transition to REJECTED", done => {
     const reason = new Error('I failed :(')
     const f1 = jest.fn()
     new FTPromise((fulfill, reject) => reject())
@@ -286,11 +257,11 @@ describe('Async handlers', () => {
   it(
     'if a handler returns a promise, the previous promise should ' +
       'adopt the state of the returned promise',
-    (done) => {
+    done => {
       const value = ':)'
       const f1 = jest.fn()
-      new FTPromise((fulfill) => fulfill())
-        .then(() => new FTPromise((resolve) => resolve(value)))
+      new FTPromise(fulfill => fulfill())
+        .then(() => new FTPromise(resolve => resolve(value)))
         .then(f1)
       setTimeout(() => {
         expect(f1.mock.calls.length).toBe(1)
@@ -303,11 +274,11 @@ describe('Async handlers', () => {
   it(
     'if a handler returns a promise resolved in the future, ' +
       'the previous promise should adopt its value',
-    (done) => {
+    done => {
       const value = ':)'
       const f1 = jest.fn()
-      new FTPromise((fulfill) => setTimeout(fulfill, 0))
-        .then(() => new FTPromise((resolve) => setTimeout(resolve, 0, value)))
+      new FTPromise(fulfill => setTimeout(fulfill, 0))
+        .then(() => new FTPromise(resolve => setTimeout(resolve, 0, value)))
         .then(f1)
       setTimeout(() => {
         expect(f1.mock.calls.length).toBe(1)
@@ -319,11 +290,11 @@ describe('Async handlers', () => {
 })
 
 describe('Additional cases', () => {
-  it('works with invalid handlers (fulfill)', (done) => {
+  it('works with invalid handlers (fulfill)', done => {
     const value = ':)'
     const f1 = jest.fn()
 
-    const p = new FTPromise((fulfill) => fulfill(value))
+    const p = new FTPromise(fulfill => fulfill(value))
     const q = p.then(null)
     q.then(f1)
 
@@ -334,7 +305,7 @@ describe('Additional cases', () => {
     }, 10)
   })
 
-  it('works with invalid handlers (reject)', (done) => {
+  it('works with invalid handlers (reject)', done => {
     const reason = 'I failed :('
     const r1 = jest.fn()
 
@@ -349,12 +320,12 @@ describe('Additional cases', () => {
     }, 10)
   })
 
-  it('the promise observers are called after the event loop', (done) => {
+  it('the promise observers are called after the event loop', done => {
     const value = ':)'
     const f1 = jest.fn()
     let resolved = false
 
-    const p = new FTPromise((fulfill) => {
+    const p = new FTPromise(fulfill => {
       fulfill(value) // should not execute f1 immediately
       resolved = true
     }).then(f1)
@@ -369,12 +340,12 @@ describe('Additional cases', () => {
     }, 10)
   })
 
-  it('rejects with a resolved promise', (done) => {
+  it('rejects with a resolved promise', done => {
     const value = ':)'
-    const reason = new FTPromise((fulfill) => fulfill(value))
+    const reason = new FTPromise(fulfill => fulfill(value))
 
     const r1 = jest.fn()
-    const p = new FTPromise((fulfill) => fulfill())
+    const p = new FTPromise(fulfill => fulfill())
       .then(() => {
         throw reason
       })
@@ -389,9 +360,9 @@ describe('Additional cases', () => {
     }, 10)
   })
 
-  it('should throw when attempted to be resolved with itself', (done) => {
+  it('should throw when attempted to be resolved with itself', done => {
     const r1 = jest.fn()
-    const p = new FTPromise((fulfill) => fulfill())
+    const p = new FTPromise(fulfill => fulfill())
     const q = p.then(() => q)
     q.then(null, r1)
 
@@ -402,13 +373,13 @@ describe('Additional cases', () => {
     }, 10)
   })
 
-  it('should work with thenables', (done) => {
+  it('should work with thenables', done => {
     const value = ':)'
     const thenable = {
-      then: (fulfill) => fulfill(value),
+      then: fulfill => fulfill(value)
     }
     const f1 = jest.fn()
-    new FTPromise((fulfill) => fulfill(value)).then(() => thenable).then(f1)
+    new FTPromise(fulfill => fulfill(value)).then(() => thenable).then(f1)
 
     setTimeout(function() {
       expect(f1.mock.calls.length).toBe(1)
