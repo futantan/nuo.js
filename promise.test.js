@@ -12,6 +12,10 @@ describe('Promise constructor', () => {
     expect(typeof resolver.mock.calls[0][1]).toBe('function')
   })
 
+
+
+
+
   it('is in a PENDING state', () => {
     const promise = new FTPromise(function resolver(fulfill, reject) {
       /* ... */
@@ -19,6 +23,10 @@ describe('Promise constructor', () => {
     // for the sake of simplicity the state is public
     expect(promise.state).toBe('PENDING')
   })
+
+
+
+
 
   it('transitions to the FULFILLED state with a `value`', () => {
     const value = ':)'
@@ -28,6 +36,10 @@ describe('Promise constructor', () => {
     expect(promise.state).toBe('FULFILLED')
   })
 
+
+
+
+
   it('transitions to the REJECTED state with a `reason`', () => {
     const reason = 'I failed :('
     const promise = new FTPromise((fulfill, reject) => {
@@ -35,13 +47,30 @@ describe('Promise constructor', () => {
     })
     expect(promise.state).toBe('REJECTED')
   })
+
+
+
+
+
 })
 
+
 describe('Observing state changes', () => {
+
+
+
+
+
   it('should have a .then method', () => {
     const promise = new FTPromise(() => {})
     expect(typeof promise.then).toBe('function')
   })
+
+
+
+
+
+
 
   it('should call the onFulfilled method when promise is in a FULFILLED state', (done) => {
     const value = ':)'
@@ -56,13 +85,14 @@ describe('Observing state changes', () => {
     }, 10)
   })
 
+
+
   it('transitions to the REJECTED state with a `reason`', (done) => {
     const reason = 'I failed :('
     const onRejected = jest.fn()
     const promise = new FTPromise((fulfill, reject) => {
       reject(reason)
     }).then(null, onRejected)
-    expect(onRejected.mock.calls.length).toBe(0)
 
     setTimeout(() => {
       expect(onRejected.mock.calls.length).toBe(1)
