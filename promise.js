@@ -4,7 +4,7 @@ const idThrow = e => {
 }
 const isPromise = x => x != null && typeof x.then === 'function'
 
-function FTPromise(executor) {
+function Nuo(executor) {
   this.state = 'PENDING'
   this.value = undefined
   this.queue = []
@@ -26,11 +26,11 @@ function FTPromise(executor) {
     reject(e)
   }
 }
-FTPromise.prototype.then = function(onResolved, onRejected) {
+Nuo.prototype.then = function(onResolved, onRejected) {
   onResolved = typeof onResolved === 'function' ? onResolved : id
   onRejected = typeof onRejected === 'function' ? onRejected : idThrow
 
-  const promise2 = new FTPromise((resolve, reject) => {
+  const promise2 = new Nuo((resolve, reject) => {
     const schedulePromise2Resolution = () => {
       setTimeout(() => {
         try {
@@ -57,4 +57,4 @@ FTPromise.prototype.then = function(onResolved, onRejected) {
   })
   return promise2
 }
-module.exports = FTPromise
+module.exports = Nuo
