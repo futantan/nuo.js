@@ -58,7 +58,3 @@ FTPromise.prototype.then = function(onResolved, onRejected) {
   return promise2
 }
 module.exports = FTPromise
-
-
-// onfulfilled
-// onrejected
