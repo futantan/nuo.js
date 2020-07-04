@@ -1,4 +1,4 @@
-const Nuo = require('./promise')
+const Nuo = require('./index')
 
 describe('Promise constructor', () => {
   it('receives a resolver function when constructed which is called immediately', () => {

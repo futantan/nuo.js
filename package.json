@@ -1,13 +1,21 @@
 {
   "name": "nuo.js",
   "version": "1.0.0",
-  "description": "",
+  "description": "Promises/A+ implementation. Simple, tiny, 60 LOC",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:futantan/nuo.js.git"
+  },
+  "keywords": ["promise", "promises", "promises-aplus", "Promises/A+", "nuo.js"],
+  "author": {
+    "name": "futantan",
+    "email": "luckytantanfu@gmail.com"
+  },
+  "main": "index.js",
   "scripts": {
     "test": "jest",
     "test:all": "promises-aplus-tests adapter.js"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
   "devDependencies": {
     "jest": "^26.1.0",

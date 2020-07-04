@@ -1,4 +1,4 @@
-const FTPromise = require('./promise')
+const FTPromise = require('./index')
 module.exports = {
   Promise: FTPromise,
   deferred: function () {
