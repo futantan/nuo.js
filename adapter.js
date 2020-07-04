@@ -1,11 +1,10 @@
-const FTPromise = require('./index')
+const Nuo = require('./index')
 module.exports = {
-  Promise: FTPromise,
-  deferred: function () {
+  Promise: Nuo,
+  deferred: function() {
     let resolve, reject
     return {
-      // eslint-disable-next-line
-      promise: new Promise(function (_resolve, _reject) {
+      promise: new Nuo(function(_resolve, _reject) {
         resolve = _resolve
         reject = _reject
       }),
