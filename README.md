@@ -6,6 +6,6 @@
 Nuo.js
 ======
 
-Nuo.js is an implementation of the Promise/A+ spec. The word 'Nul' means promise in Chinese(诺)
+`Nuo.js` is an implementation of the Promise/A+ spec. The word `Nuo` means promise in Chinese(诺)
 
 It's only 60 lines of code, very neat and clean.
