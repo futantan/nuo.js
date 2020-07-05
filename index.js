@@ -1,27 +1,28 @@
+const Status = {
+  Pending: 'PENDING',
+  Fulfilled: 'FULFILLED',
+  Rejected: 'REJECTED'
+}
 const id = v => v
 const idThrow = e => {
   throw e
 }
-const isPromise = x => x != null && typeof x.then === 'function'
 
 function Nuo(executor) {
-  this.state = 'PENDING'
+  this.state = Status.Pending
   this.value = undefined
   this.queue = []
 
-  const transitionTo = (state, x) => {
-    if (this.state === 'PENDING') {
+  const transitionTo = state => x => {
+    if (this.state === Status.Pending) {
       this.state = state
       this.value = x
     }
     this.queue.forEach(f => f())
   }
 
-  const resolve = value => transitionTo('FULFILLED', value)
-  const reject = reason => transitionTo('REJECTED', reason)
-
   try {
-    executor(resolve, reject)
+    executor(transitionTo(Status.Fulfilled), transitionTo(Status.Rejected))
   } catch (e) {
     reject(e)
   }
@@ -34,22 +35,15 @@ Nuo.prototype.then = function(onResolved, onRejected) {
     const schedulePromise2Resolution = () => {
       setTimeout(() => {
         try {
-          const cb = this.state === 'FULFILLED' ? onResolved : onRejected
+          const cb = this.state === Status.Fulfilled ? onResolved : onRejected
           const x = cb(this.value)
-          if (x === promise2) {
-            throw new TypeError('Chaining cycle detected for promise')
-          }
-          if (isPromise(x)) {
-            x.then(resolve, reject)
-          } else {
-            resolve(x)
-          }
+          resolvePromise(promise2, x, resolve, reject)
         } catch (e) {
           reject(e)
         }
       })
     }
-    if (this.state === 'PENDING') {
+    if (this.state === Status.Pending) {
       this.queue.push(schedulePromise2Resolution)
     } else {
       schedulePromise2Resolution()
@@ -57,4 +51,39 @@ Nuo.prototype.then = function(onResolved, onRejected) {
   })
   return promise2
 }
+
+function resolvePromise(promise2, x, resolve, reject) {
+  if (x === promise2) {
+    return reject(new TypeError('Chaining cycle detected for promise'))
+  }
+  let called
+  const guard = fn => {
+    if (called) return
+    called = true
+    fn()
+  }
+  if (x != null && (typeof x === 'object' || typeof x === 'function')) {
+    try {
+      const then = x.then
+      if (typeof then === 'function') {
+        then.call(
+          x,
+          y => {
+            guard(() => resolvePromise(promise2, y, resolve, reject))
+          },
+          err => {
+            guard(() => reject(err))
+          }
+        )
+      } else {
+        resolve(x)
+      }
+    } catch (e) {
+      guard(() => reject(e))
+    }
+  } else {
+    resolve(x)
+  }
+}
+
 module.exports = Nuo
