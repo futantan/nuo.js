@@ -21,7 +21,7 @@ class Nuo {
     try {
       executor(transitionTo(Status.Fulfilled), transitionTo(Status.Rejected))
     } catch (e) {
-      reject(e)
+      transitionTo(Status.Rejected)(e)
     }
   }
 
