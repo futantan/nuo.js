@@ -1,6 +1,6 @@
 {
   "name": "nuo.js",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "description": "Promises/A+ implementation. Simple, tiny, 80 LOC",
   "repository": {
     "type": "git",
